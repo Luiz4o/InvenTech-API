@@ -2,7 +2,7 @@ import { Product } from "../../models/products";
 import { HttpResponse, HttpRequest } from "../protocols";
 
 export interface ICreateProductController {
-    handle(httpRequest: HttpRequest<CreateProductParams>): Promise<HttpResponse<Product>>
+    handle(httpRequest: HttpRequest<CreateProductParams>): Promise<HttpResponse<Product | string>>
 }
 
 export interface CreateProductParams {

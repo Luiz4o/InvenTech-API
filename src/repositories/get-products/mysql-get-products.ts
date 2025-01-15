@@ -6,30 +6,30 @@ export class MysqlGetProductsRepository implements IGetProductsRepository {
     async getProducts(): Promise<Product[]> {
         const getAllProducts = 'SELECT * FROM PRODUCTS';
 
-        return new Promise((resolve, reject) => {
-            MysqlClient.client?.query(getAllProducts, (error: string, results: any[]) => {
-                if (error) {
-                    return reject(error);
-                }
+        try{
 
-                const products: Product[] = results.map(result => ({
-                    id: result.id,
-                    nameProduct: result.nameProduct,
-                    description: result.description,
-                    image: result.image,
-                    price: result.price
-                }));
+        const [rows]: any = await MysqlClient.client?.execute(getAllProducts);
 
-                resolve(products); // Resolve a Promise com os produtos
-            });
-        });
+        const products: Product[] = rows.map((result: any) => ({
+            id: result.id,
+            nameProduct: result.nameProduct,
+            description: result.descript,
+            image: result.image,
+            price: result.price,
+        }));
+
+        return products
+    }catch (error){
+        throw new Error('Não foi possível buscar os produtos.');
+    }
+
     }
 
     async getProductByName(name: string): Promise<Product> {
         const getProductByName = `SELECT * FROM PRODUCTS
-                                WHERE nameProduct = ?`
+                                WHERE nameProduct = '${name}'`
 
-        const [rows]: any = await MysqlClient.client?.execute(getProductByName, [name]);
+        const [rows]: any = await MysqlClient.client?.execute(getProductByName);
 
         if (rows.length === 0) {
             throw new Error(`Product with name "${name}" not found`);

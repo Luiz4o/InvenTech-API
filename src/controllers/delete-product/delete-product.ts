@@ -1,7 +1,8 @@
-import { HttpRequest, HttpResponse } from "../protocols";
-import { IDeleteProductController, IDeleteProductRepository } from "./protocols";
+import { badRequest, ok } from "../helpers";
+import { HttpRequest, HttpResponse, IController } from "../protocols";
+import {  IDeleteProductRepository } from "./protocols";
 
-export class DeleteProductController implements IDeleteProductController {
+export class DeleteProductController implements IController {
     deleteProductRepository: IDeleteProductRepository
             
     constructor(deleteProductRepository: IDeleteProductRepository) {
@@ -13,23 +14,14 @@ export class DeleteProductController implements IDeleteProductController {
             const id = httpRequest?.params?.id
 
             if(!id){
-                return {
-                    statusCode: 400,
-                    body: 'Está faltando o ID do produto'
-                }
+                return badRequest('Está faltando o ID do produto')
             }
 
             const messageReturn = await this.deleteProductRepository.deleteProduct(id)
 
-            return {
-                statusCode: 200,
-                body:messageReturn
-            }
+            return ok<string>(messageReturn)
         }catch {
-            return {
-                statusCode: 500,
-                body: "Algo deu ao deletar o produto"
-            }
+            return badRequest('Algo deu ao deletar o produto')
         }
     }
 

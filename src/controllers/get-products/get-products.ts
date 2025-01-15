@@ -1,25 +1,22 @@
-import { IGetProductsController, IGetProductsRepository } from "./protocols";
+import { Product } from "../../models/products";
+import { badRequest, ok, serverError } from "../helpers";
+import { HttpResponse, IController } from "../protocols";
+import { IGetProductsRepository } from "./protocols";
 
-export class GetProductsController implements IGetProductsController {
+export class GetProductsController implements IController {
     getProductsRepository: IGetProductsRepository
 
     constructor(getProductsRepository: IGetProductsRepository) {
         this.getProductsRepository = getProductsRepository
     }
 
-    async handle() {
+    async handle(): Promise<HttpResponse<Product[] | string>> {
         try{
         const products = await this.getProductsRepository.getProducts()
     
-        return {
-            statusCode: 200,
-            body: products,
-        }
+        return ok<Product[]>(products)
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: 'Deu algum erro no servidor!'
-        }
+        return serverError()
     }
 
     }

@@ -41,7 +41,7 @@ const main =async () => {
           res.status(statusCode).send(body)
       })
 
-      app.patch('/users/:id', async (req,res) => {
+      app.patch('/products/:id', async (req,res) => {
         const mysqlUpdateProductRepository = new MysqlUpdateProductRepository()
         const updateProductController = new UpdateProductController(mysqlUpdateProductRepository)
 
@@ -53,7 +53,7 @@ const main =async () => {
         res.status(statusCode).send(body)
       })
     
-      app.delete('/users/:id', async (req,res) => {
+      app.delete('/products/:id', async (req,res) => {
         const mysqlDeleteProductRepository = new MysqlDeleteProductRepository()
         const deleteProductController = new DeleteProductController(mysqlDeleteProductRepository)
 

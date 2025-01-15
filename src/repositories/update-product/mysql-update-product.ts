@@ -1,3 +1,4 @@
+import { FieldPacket, ResultSetHeader } from "mysql2";
 import { IUpdateProductRepository, UpdateProductParams } from "../../controllers/update-product/protocols";
 import { MysqlClient } from "../../database/mysql";
 import { Product } from "../../models/products";
@@ -6,36 +7,38 @@ export class MysqlUpdateProductRepository implements IUpdateProductRepository{
     async updateProduct(id: string,params: UpdateProductParams): Promise<Product> {
         const updateFields: string[] = [];
         const values: any[] = [];
+        let setProductQuery = `UPDATE PRODUCTS SET`
+
+        let hasFieldsToChange = false
+
 
         if (params.nameProduct) {
-            updateFields.push('productName = ?');
-            values.push(params.nameProduct);
+            setProductQuery += ` nameProduct = '${params.nameProduct}' `;
+            hasFieldsToChange = true
         }
         if (params.description) {
-            updateFields.push('description = ?');
-            values.push(params.description);
+            setProductQuery += ` descript = '${params.description}' `;
+            if(hasFieldsToChange){setProductQuery+=' , '}
+            hasFieldsToChange = true
         }
         if (params.image) {
-            updateFields.push('image = ?');
-            values.push(params.image);
+            setProductQuery += ` image = '${params.image}' `;
+            if(hasFieldsToChange){setProductQuery+=' , '}
+            hasFieldsToChange = true
         }
         if (params.price) {
-            updateFields.push('price = ?');
-            values.push(params.price);
+            setProductQuery += ` price = ${params.price} `;
+            hasFieldsToChange = true
         }
 
-        if (updateFields.length === 0) {
+        if (!hasFieldsToChange) {
             throw new Error('Nenhum campo para atualizar');
         }
 
-        values.push(id);
-    
-        const setProductQuery = `UPDATE PRODUCTS SET ${updateFields.join(', ')} WHERE id = ?`;
+        setProductQuery += `WHERE id = ${id}`
 
-        // Executa a query
-        const [result]: any = await MysqlClient.client?.execute(setProductQuery, values);
+        const [result, _] = await MysqlClient.client?.execute(setProductQuery) as [ResultSetHeader, FieldPacket[]];
 
-        // Verifica se a atualização foi bem-sucedida
         if (result.affectedRows === 0) {
             throw new Error(`Produto com ID ${id} não encontrado`);
         }

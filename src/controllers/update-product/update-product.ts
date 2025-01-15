@@ -1,25 +1,26 @@
 import { Product } from "../../models/products";
-import { CreateProductParams } from "../create-product/protocols";
-import { HttpRequest, HttpResponse } from "../protocols";
-import { IUpdateProductController, IUpdateProductRepository, UpdateProductParams } from "./protocols";
+import { badRequest, ok, serverError } from "../helpers";
+import { HttpRequest, HttpResponse, IController } from "../protocols";
+import { IUpdateProductRepository, UpdateProductParams } from "./protocols";
 
-export class UpdateProductController implements IUpdateProductController {
+export class UpdateProductController implements IController {
     updateProductRepository: IUpdateProductRepository
         
         constructor(updateProductRepository: IUpdateProductRepository) {
             this.updateProductRepository = updateProductRepository
         }
 
-    async handle(httpRequest: HttpRequest<any>): Promise<HttpResponse<Product>> {
+    async handle(httpRequest: HttpRequest<UpdateProductParams>): Promise<HttpResponse<Product | string>> {
         const id = httpRequest?.params?.id
         const body = httpRequest?.body
 
+        if(!body){
+            return badRequest('Está faltando campos')
+        }
+
         try{
             if(!id){
-                return{
-                    statusCode:400,
-                    body: 'Está faltando o ID do produto'
-                }
+                return badRequest('Falta o id do produto')
             }
 
 
@@ -27,23 +28,16 @@ export class UpdateProductController implements IUpdateProductController {
             const someFieldsNotAllowedToUpdate = Object.keys(body).some(key => !allowedFieldsToUpdate.includes(key as keyof UpdateProductParams))
 
             if( someFieldsNotAllowedToUpdate){
-                return{
-                    statusCode: 400,
-                    body: 'Foram enviados campos que não permitidos'
-                }
+                return badRequest('Algum campo enviado não é permitido')
             }
 
             const product = await this.updateProductRepository.updateProduct(id, body)
 
-            return {
-                statusCode: 200,
-                body: product
-            }
+            console.log('oi')
+
+            return ok<Product>(product)
         }catch (error) {
-            return {
-                statusCode: 500,
-                body: 'Algo deu errado na atualização do produto'
-            }
+            return serverError()
         }
     }
 

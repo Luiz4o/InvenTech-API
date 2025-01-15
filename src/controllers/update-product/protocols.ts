@@ -8,10 +8,6 @@ export interface UpdateProductParams {
     image?: string
 }
 
-export interface IUpdateProductController {
-    handle(httpRequest:HttpRequest<any>): Promise<HttpResponse<Product>>
-}
-
 export interface IUpdateProductRepository {
     updateProduct(id: string,params: UpdateProductParams): Promise<Product>
 }

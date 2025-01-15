@@ -1,11 +1,14 @@
 export interface HttpResponse<T> {
     statusCode: number,
-    body: T | string
+    body: T
 }
 
-export interface HttpRequest {
+export interface HttpRequest<B> {
     params?: any
     header?: any
-    body: any
+    body?: B
+}
 
+export interface IController {
+    handle(httpRequest: HttpRequest<unknown>): Promise<HttpResponse<unknown>>
 }
