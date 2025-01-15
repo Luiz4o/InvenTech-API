@@ -5,6 +5,10 @@ import { MysqlGetProductsRepository } from './repositories/get-products/mysql-ge
 import { MysqlClient } from './database/mysql'
 import { MysqlCreateProductRepository } from './repositories/create-products/mysql-create-products'
 import { CreateProductController } from './controllers/create-product/create-product'
+import { MysqlUpdateProductRepository } from './repositories/update-product/mysql-update-product'
+import { UpdateProductController } from './controllers/update-product/update-product'
+import { MysqlDeleteProductRepository } from './repositories/delete-product/mysql-delete-product'
+import { DeleteProductController } from './controllers/delete-product/delete-product'
 
 
 const main =async () => {
@@ -35,6 +39,29 @@ const main =async () => {
           body: req.body})
 
           res.status(statusCode).send(body)
+      })
+
+      app.patch('/users/:id', async (req,res) => {
+        const mysqlUpdateProductRepository = new MysqlUpdateProductRepository()
+        const updateProductController = new UpdateProductController(mysqlUpdateProductRepository)
+
+        const {body, statusCode} = await updateProductController.handle({
+          body: req.body,
+          params: req.params
+        })
+
+        res.status(statusCode).send(body)
+      })
+    
+      app.delete('/users/:id', async (req,res) => {
+        const mysqlDeleteProductRepository = new MysqlDeleteProductRepository()
+        const deleteProductController = new DeleteProductController(mysqlDeleteProductRepository)
+
+        const {body, statusCode} = await deleteProductController.handle({
+          params: req.params
+        })
+
+        res.status(statusCode).send(body)
       })
 
       app.listen(port, () => console.log(`Listening on port ${port}`));

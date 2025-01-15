@@ -39,6 +39,7 @@ export class MysqlUpdateProductRepository implements IUpdateProductRepository{
         if (result.affectedRows === 0) {
             throw new Error(`Produto com ID ${id} não encontrado`);
         }
+        
         const updatedProduct: Product = {
             id: id,
             nameProduct: params.nameProduct || '',
