@@ -3,6 +3,8 @@ import {config} from 'dotenv'
 import { GetProductsController } from './controllers/get-products/get-products'
 import { MysqlGetProductsRepository } from './repositories/get-products/mysql-get-products'
 import { MysqlClient } from './database/mysql'
+import { MysqlCreateProductRepository } from './repositories/create-products/mysql-create-products'
+import { CreateProductController } from './controllers/create-product/create-product'
 
 
 const main =async () => {
@@ -10,6 +12,8 @@ const main =async () => {
       config()
 
       const app = express()
+
+      app.use(express.json())
 
       const port = parseInt(process.env.PORT || '8000')
 
@@ -22,6 +26,16 @@ const main =async () => {
   
         res.status(statusCode).send(body);  
       });
+
+      app.post('/products', async (req,res)=>{
+        const mysqlCreateProductRepository = new MysqlCreateProductRepository()
+        const createProductController = new CreateProductController(mysqlCreateProductRepository)
+
+        const {body, statusCode} = await createProductController.handle({
+          body: req.body})
+
+          res.status(statusCode).send(body)
+      })
 
       app.listen(port, () => console.log(`Listening on port ${port}`));
     } catch (error) {
