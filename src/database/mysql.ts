@@ -5,18 +5,18 @@ config()
 
 
 export const MysqlClient = {
-    connection: null as mysql.Connection | null,
+    client: null as mysql.Connection | null,
 
 
     async connect(): Promise<void> {
-        const host = process.env.MYSQL_HOST || 'localhost';
-    const port = parseInt(process.env.MYSQL_PORT || '3306');
-    const user = process.env.MYSQL_USERNAME || 'root';
-    const password = process.env.MYSQL_PASSWORD || '';
-    const database = process.env.MYSQL_DATABASE || 'test';
+      const host = process.env.MYSQL_HOST || 'localhost';
+      const port = parseInt(process.env.MYSQL_PORT || '3306');
+      const user = process.env.MYSQL_USERNAME || 'root';
+      const password = process.env.MYSQL_PASSWORD || '';
+      const database = process.env.MYSQL_DATABASE || 'test';
 
     try {
-      this.connection = await mysql.createConnection({
+      this.client = await mysql.createConnection({
         host,
         port,
         user,
@@ -24,7 +24,7 @@ export const MysqlClient = {
         database,
       });
       console.log('Conexão ao MySQL estabelecida com sucesso!');
-      const [rows] = await this.connection.execute('SELECT 1 AS result');
+      const [rows] = await this.client.execute('SELECT 1 AS result');
       console.log('Teste de conexão bem-sucedido. Resultado:', rows);
 
     } catch (error) {
@@ -34,8 +34,8 @@ export const MysqlClient = {
   },
 
   async disconnect(): Promise<void> {
-    if (this.connection) {
-      await this.connection.end();
+    if (this.client) {
+      await this.client.end();
       console.log('Conexão ao MySQL encerrada.');
     }
   },
