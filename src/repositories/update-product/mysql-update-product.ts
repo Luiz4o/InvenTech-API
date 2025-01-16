@@ -47,7 +47,7 @@ export class MysqlUpdateProductRepository implements IUpdateProductRepository{
             id: id,
             nameProduct: params.nameProduct || '',
             description: params.description || '',
-            image: params.image || '',
+            image: params.image || null,
             price: params.price || 0,
         };
                                 

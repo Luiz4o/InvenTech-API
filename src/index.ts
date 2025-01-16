@@ -1,4 +1,5 @@
 import express from 'express'
+import multer from 'multer'
 import {config} from 'dotenv'
 import { GetProductsController } from './controllers/get-products/get-products'
 import { MysqlGetProductsRepository } from './repositories/get-products/mysql-get-products'
@@ -10,6 +11,8 @@ import { UpdateProductController } from './controllers/update-product/update-pro
 import { MysqlDeleteProductRepository } from './repositories/delete-product/mysql-delete-product'
 import { DeleteProductController } from './controllers/delete-product/delete-product'
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage })
 
 const main =async () => {
     try {
@@ -21,7 +24,7 @@ const main =async () => {
 
       const port = parseInt(process.env.PORT || '8000')
 
-      await MysqlClient.connect();
+      await MysqlClient.connect()
   
       app.get('/products', async (req, res) => {
         const mysqlGetProductsRepository = new MysqlGetProductsRepository();
@@ -31,12 +34,13 @@ const main =async () => {
         res.status(statusCode).send(body);  
       });
 
-      app.post('/products', async (req,res)=>{
+      app.post('/products',upload.single('image'), async (req,res)=>{
         const mysqlCreateProductRepository = new MysqlCreateProductRepository()
         const createProductController = new CreateProductController(mysqlCreateProductRepository)
 
         const {body, statusCode} = await createProductController.handle({
-          body: req.body})
+          body: req.body,
+          file: req.file})
 
           res.status(statusCode).send(body)
       })

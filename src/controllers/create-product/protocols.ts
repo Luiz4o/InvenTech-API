@@ -6,10 +6,10 @@ export interface ICreateProductController {
 }
 
 export interface CreateProductParams {
-    nameProduct: string;
+    nameProduct: string
     price: number
     description: string
-    image: string
+    image: Buffer
 }
 
 export interface ICreateProductRepository {

@@ -5,7 +5,7 @@ export interface UpdateProductParams {
     nameProduct?: string
     price?: number
     description?: string
-    image?: string
+    image?: Buffer | null
 }
 
 export interface IUpdateProductRepository {

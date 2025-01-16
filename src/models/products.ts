@@ -3,5 +3,5 @@ export interface Product {
     nameProduct: string
     price: number
     description: string
-    image: string
+    image: Buffer | null
 }

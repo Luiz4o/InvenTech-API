@@ -33,8 +33,6 @@ export class UpdateProductController implements IController {
 
             const product = await this.updateProductRepository.updateProduct(id, body)
 
-            console.log('oi')
-
             return ok<Product>(product)
         }catch (error) {
             return serverError()

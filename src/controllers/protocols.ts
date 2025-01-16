@@ -7,6 +7,7 @@ export interface HttpRequest<B> {
     params?: any
     header?: any
     body?: B
+    file?: Express.Multer.File 
 }
 
 export interface IController {

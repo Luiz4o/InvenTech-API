@@ -1,39 +1,32 @@
-import { FieldPacket, ResultSetHeader } from "mysql2";
-import { CreateProductParams, ICreateProductRepository } from "../../controllers/create-product/protocols";
+import {
+  CreateProductParams,
+  ICreateProductRepository,
+} from "../../controllers/create-product/protocols";
 import { MysqlClient } from "../../database/mysql";
 import { Product } from "../../models/products";
 
-export class MysqlCreateProductRepository implements ICreateProductRepository{
-    //Adicionar no controller uma chamada para a função getByName, para ver se realmente foi criado este objeto no banco
-    async createProduct(params: CreateProductParams): Promise<Product> {
-        const createProductQuery = `INSERT INTO PRODUCTS(nameProduct, descript, image, price)
-                                VALUES ( '${params.nameProduct}', '${params.description}', '${params.image}', ${params.price})`
-
+export class MysqlCreateProductRepository implements ICreateProductRepository {
+  //Adicionar no controller uma chamada para a função getByName, para ver se realmente foi criado este objeto no banco
+  async createProduct(params: CreateProductParams): Promise<Product> {
     try {
-        if (!MysqlClient.client) {
-            await MysqlClient.connect();
-  
-        }
+      if (!MysqlClient.client) {
+        await MysqlClient.connect();
+      }
+      
+      const product: Product = (
+        await MysqlClient.ProductsTableModel!.create({
+          nameProduct: params.nameProduct,
+          description: params.description,
+          price: params.price,
+          image: params.image,
+        })
+      ).get() as Product;
 
-        console.log(createProductQuery);
+      console.log(product);
 
-        const [result, _] = await MysqlClient.client?.execute(createProductQuery) as [ResultSetHeader, FieldPacket[]];
-
-        if (result.affectedRows === 1) {
-            // Produto foi inserido com sucesso, então podemos retornar o novo produto
-            return {
-                id: result.insertId.toString(),  // ID do novo produto inserido
-                nameProduct: params.nameProduct,
-                description: params.description,
-                image: params.image,
-                price: params.price
-            };
-        } else {
-            throw new Error('Falha ao criar o produto');
-        }
+      return product;
+    } catch (error: any) {
+      throw new Error(`Erro ao criar o produto: ${error.message}`);
     }
-    catch (error: any) {
-            throw new Error(`Erro ao criar o produto: ${error.message}`);
-        }
-    }
+  }
 }
