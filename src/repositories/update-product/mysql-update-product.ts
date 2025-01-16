@@ -4,54 +4,40 @@ import { MysqlClient } from "../../database/mysql";
 import { Product } from "../../models/products";
 
 export class MysqlUpdateProductRepository implements IUpdateProductRepository{
-    async updateProduct(id: string,params: UpdateProductParams): Promise<Product> {
-        const updateFields: string[] = [];
-        const values: any[] = [];
-        let setProductQuery = `UPDATE PRODUCTS SET`
+    async updateProduct(params: UpdateProductParams): Promise<Product> {
+        try {
+            if (!MysqlClient.client) {
+              await MysqlClient.connect();
+            }
 
-        let hasFieldsToChange = false
+            const updateFields: any = {};
 
-
-        if (params.nameProduct) {
-            setProductQuery += ` nameProduct = '${params.nameProduct}' `;
-            hasFieldsToChange = true
-        }
-        if (params.description) {
-            setProductQuery += ` descript = '${params.description}' `;
-            if(hasFieldsToChange){setProductQuery+=' , '}
-            hasFieldsToChange = true
-        }
-        if (params.image) {
-            setProductQuery += ` image = '${params.image}' `;
-            if(hasFieldsToChange){setProductQuery+=' , '}
-            hasFieldsToChange = true
-        }
-        if (params.price) {
-            setProductQuery += ` price = ${params.price} `;
-            hasFieldsToChange = true
-        }
-
-        if (!hasFieldsToChange) {
-            throw new Error('Nenhum campo para atualizar');
-        }
-
-        setProductQuery += `WHERE id = ${id}`
-
-        const [result, _] = await MysqlClient.client?.execute(setProductQuery) as [ResultSetHeader, FieldPacket[]];
-
-        if (result.affectedRows === 0) {
-            throw new Error(`Produto com ID ${id} não encontrado`);
-        }
-        
-        const updatedProduct: Product = {
-            id: id,
-            nameProduct: params.nameProduct || '',
-            description: params.description || '',
-            image: params.image || null,
-            price: params.price || 0,
-        };
-                                
-            return updatedProduct;
-        }
-
+            if (params.nameProduct && params.nameProduct !== '') {
+                updateFields.nameProduct = params.nameProduct;
+            }
+            if (params.description && params.description !== '') {
+                updateFields.description = params.description;
+            }
+            if (params.price && params.price !== null) {
+                updateFields.price = params.price;
+            }
+            if (params.image && params.image !== null) {
+                updateFields.image = params.image;
+            }
+      
+            const [affectedCount] = await MysqlClient.ProductsTableModel!.update(
+              updateFields,
+              { where: { id: params.id } }
+            );
+      
+            if (affectedCount === 0)
+              throw new Error("Não foi possível atualizar a quantidade");
+      
+            const updatedInstance =
+              await MysqlClient.StockProductsTabelModel!.findByPk(params.id);
+            return updatedInstance?.get();
+          } catch (error: any) {
+            throw new Error(`Erro ao criar o produto: ${error.message}`);
+          }
+}
 }

@@ -2,6 +2,7 @@ import { Product } from "../../models/products";
 import { HttpRequest, HttpResponse } from "../protocols";
 
 export interface UpdateProductParams {
+    id: string
     nameProduct?: string
     price?: number
     description?: string
@@ -9,5 +10,5 @@ export interface UpdateProductParams {
 }
 
 export interface IUpdateProductRepository {
-    updateProduct(id: string,params: UpdateProductParams): Promise<Product>
+    updateProduct(params: UpdateProductParams): Promise<Product>
 }

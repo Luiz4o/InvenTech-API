@@ -6,5 +6,5 @@ export interface CreateStockProductParams {
 }
 
 export interface ICreateStockProductRepository{
-    CreateStockProduct(params: Stock) : Promise<Stock>
+    CreateStockProduct(params: CreateStockProductParams) : Promise<Stock>
 }

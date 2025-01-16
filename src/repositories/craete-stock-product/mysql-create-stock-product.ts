@@ -1,11 +1,10 @@
-import { ICreateStockProductRepository } from "../../controllers/create-stock-product/protocols";
+import { CreateStockProductParams, ICreateStockProductRepository } from "../../controllers/create-stock-product/protocols";
 import { MysqlClient } from "../../database/mysql";
 import { Stock } from "../../models/stock";
-import { Product } from "../../models/products";
 
 export class MysqlCreateStockProductRepository implements ICreateStockProductRepository {
   //Adicionar no controller uma chamada para a função getByName, para ver se realmente foi criado este objeto no banco
-  async CreateStockProduct(params: Stock): Promise<Stock> {
+  async CreateStockProduct(params: CreateStockProductParams): Promise<Stock> {
     try {
       if (!MysqlClient.client) {
         await MysqlClient.connect();
