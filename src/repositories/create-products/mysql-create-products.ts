@@ -9,12 +9,14 @@ export class MysqlCreateProductRepository implements ICreateProductRepository {
   //Adicionar no controller uma chamada para a função getByName, para ver se realmente foi criado este objeto no banco
   async createProduct(params: CreateProductParams): Promise<Product> {
     try {
-      if (!MysqlClient.client) {
-        await MysqlClient.connect();
+
+      if (!MysqlClient.ProductsTableModel) {
+        throw new Error("Falha ao se conectar com o banco");
       }
-      
+      console.log('oi')
+
       const product: Product = (
-        await MysqlClient.ProductsTableModel!.create({
+        await MysqlClient.ProductsTableModel.create({
           nameProduct: params.nameProduct,
           description: params.description,
           price: params.price,

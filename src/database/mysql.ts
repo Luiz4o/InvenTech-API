@@ -12,59 +12,81 @@ export const MysqlClient = {
   StockProductsTabelModel: null as ModelStatic<Model<any, any>> | null,
 
   async createTables(): Promise<void> {
-    try{
-    const ProductsTableModel = this.seq?.define("products", {
-      nameProduct: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      price: {
-        type: DataTypes.FLOAT,
-      },
-      image: {
-        type: DataTypes.BLOB,
-      },
-    });
-
-    const StockProductsTabelModel = this.seq?.define("stock", {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      productId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: ProductsTableModel,
-          key: "id",
+    try {
+      const ProductsTableModel = this.seq?.define("products", {
+        id: {
+          type: DataTypes.BIGINT,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        nameProduct: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        description: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        price: {
+          type: DataTypes.FLOAT,
+        },
+        image: {
+          type: DataTypes.BLOB,
         },
       },
-      quantity: {
-        type: DataTypes.NUMBER,
-        allowNull: false,
+        {
+          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+        }
+      );
+
+      const StockProductsTabelModel = this.seq?.define("stock", {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        productId: {
+          type: DataTypes.BIGINT,
+          references: {
+            model: ProductsTableModel,
+            key: "id",
+          },
+        },
+        quantity: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
       },
-    });
+        {
+          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+        }
+      );
 
-    if (!ProductsTableModel || !StockProductsTabelModel) {
-      throw new Error("Erro ao acessar alguma tabela");
-    }
+      if (!ProductsTableModel || !StockProductsTabelModel) {
+        throw new Error("Erro ao acessar alguma tabela");
+      }
 
-    ProductsTableModel.hasOne(StockProductsTabelModel, {
-      foreignKey: "productId", // Chave estrangeira no Profile
-      onDelete: "CASCADE", // Opção para deletar o Profile se o User for deletado
-    });
+      this.ProductsTableModel = ProductsTableModel;
+      this.StockProductsTabelModel = StockProductsTabelModel;
 
-    StockProductsTabelModel.belongsTo(ProductsTableModel, {
-      foreignKey: "userId", // Chave estrangeira no Profile
-    });
+      if (!ProductsTableModel || !StockProductsTabelModel) {
+        throw new Error("Erro ao acessar alguma tabela");
+      }
 
-    await this.seq?.sync({ force: false });
-    }catch (error){
-        throw new Error("Falha ao criar o produto");
+      ProductsTableModel.hasOne(StockProductsTabelModel, {
+        foreignKey: "productId",
+        onDelete: "CASCADE"
+      });
+
+      StockProductsTabelModel.belongsTo(ProductsTableModel, {
+        foreignKey: "productId"
+      });
+
+      console.log("DEFINES CRIADOS")
+
+      await this.seq?.sync({ force: false });
+    } catch (error) {
+      throw new Error("Falha ao criar o produto");
     }
   },
 
@@ -83,16 +105,12 @@ export const MysqlClient = {
         username: user,
         password: password,
       });
-      this.seq
-        .authenticate()
-        .then(() => {
-          console.log("Connection has been established successfully.");
-        })
-        .catch((error) => {
-          console.error("Unable to connect to the database: ", error);
-        });
+      this.seq.authenticate()
 
-      this.createTables();
+      console.log("Connection has been established successfully.");
+
+      await this.createTables();
+
     } catch (error) {
       console.error("Erro ao conectar ao MySQL:", error);
       throw error;

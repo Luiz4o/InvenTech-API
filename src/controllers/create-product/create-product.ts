@@ -13,12 +13,12 @@ export class CreateProductController implements IController {
   async handle(
     httpRequest: HttpRequest<CreateProductParams>
   ): Promise<HttpResponse<Product | string>> {
+
     try {
       const requiredFields: string[] = [
         "nameProduct",
         "description",
-        "image",
-        "price",
+        "price"
       ];
 
       for (const field of requiredFields) {
@@ -38,6 +38,13 @@ export class CreateProductController implements IController {
 
       const imageBuffer = httpRequest.file.buffer;
 
+      console.log("Criando produto com os dados:", {
+        nameProduct: httpRequest.body.nameProduct,
+        description: httpRequest.body.description,
+        price: httpRequest.body.price,
+        image: imageBuffer,
+      })
+
       const product = await this.createProductRepository.createProduct({
         nameProduct: httpRequest.body.nameProduct,
         description: httpRequest.body.description,
@@ -49,6 +56,7 @@ export class CreateProductController implements IController {
 
       return created(product);
     } catch (error) {
+      console.error("Erro ao criar produto:", error)
       return serverError();
     }
   }

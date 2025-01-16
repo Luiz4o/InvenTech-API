@@ -1,5 +1,4 @@
 import { Product } from "../../models/products";
-import { HttpRequest, HttpResponse } from "../protocols";
 
 export interface UpdateProductParams {
     id: string

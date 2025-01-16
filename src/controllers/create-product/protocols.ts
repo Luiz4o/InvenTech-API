@@ -8,5 +8,5 @@ export interface CreateProductParams {
 }
 
 export interface ICreateProductRepository {
-    createProduct(params: CreateProductParams) : Promise<Product>
+    createProduct(params: CreateProductParams): Promise<Product>
 }
