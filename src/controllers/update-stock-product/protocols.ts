@@ -5,6 +5,6 @@ export interface UpdateStockProductParams {
     quantity: number,
 }
 
-export interface IUpdateStockProductRepository{
-    updateStockProduct(params: UpdateStockProductParams) : Promise<Stock>
+export interface IUpdateStockProductRepository {
+    updateStockProduct(params: UpdateStockProductParams, id: string): Promise<Stock>
 }

@@ -1,5 +1,6 @@
 import express from 'express'
 import multer from 'multer'
+import cors from 'cors';
 import { config } from 'dotenv'
 import { GetProductsController } from './controllers/get-products/get-products'
 import { MysqlGetProductsRepository } from './repositories/get-products/mysql-get-products'
@@ -10,6 +11,10 @@ import { MysqlUpdateProductRepository } from './repositories/update-product/mysq
 import { UpdateProductController } from './controllers/update-product/update-product'
 import { MysqlDeleteProductRepository } from './repositories/delete-product/mysql-delete-product'
 import { DeleteProductController } from './controllers/delete-product/delete-product'
+import { MysqlCreateStockProductRepository } from './repositories/craete-stock-product/mysql-create-stock-product';
+import { CreateStockProductController } from './controllers/create-stock-product/create-stock-product';
+import { MysqlUpdateStockProductRepository } from './repositories/update-stock-product/mysql-update-stock-product';
+import { UpdateStockProductsController } from './controllers/update-stock-product/update-stock-product';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage })
@@ -21,6 +26,12 @@ const main = async () => {
     const app = express()
 
     app.use(express.json())
+
+    app.use(cors({
+      origin: 'http://localhost:3000', // Permite requisições apenas do frontend
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+      credentials: true, // Caso use cookies ou headers de autenticação
+    }))
 
     const port = parseInt(process.env.PORT || '8000')
 
@@ -46,11 +57,34 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
+    app.post('/stock', async (req, res) => {
+      const mysqlCreateStockProductRepository = new MysqlCreateStockProductRepository()
+      const createStockProductController = new CreateStockProductController(mysqlCreateStockProductRepository)
+
+      const { body, statusCode } = await createStockProductController.handle({
+        body: req.body
+      })
+
+      res.status(statusCode).send(body)
+    })
+
     app.patch('/products/:id', async (req, res) => {
       const mysqlUpdateProductRepository = new MysqlUpdateProductRepository()
       const updateProductController = new UpdateProductController(mysqlUpdateProductRepository)
 
       const { body, statusCode } = await updateProductController.handle({
+        body: req.body,
+        params: req.params
+      })
+
+      res.status(statusCode).send(body)
+    })
+
+    app.patch('/stock/:id', async (req, res) => {
+      const mysqlUpdateStockProductRepository = new MysqlUpdateStockProductRepository()
+      const updateStockProductController = new UpdateStockProductsController(mysqlUpdateStockProductRepository)
+
+      const { body, statusCode } = await updateStockProductController.handle({
         body: req.body,
         params: req.params
       })

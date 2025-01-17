@@ -4,47 +4,50 @@ import { Product } from "../../models/products";
 
 export class MysqlGetProductsRepository implements IGetProductsRepository {
     async getProducts(): Promise<Product[]> {
-        const getAllProducts = 'SELECT * FROM PRODUCTS';
+        try {
 
-        try{
+            const results = await MysqlClient.ProductsTableModel!.findAll({
+                include: [
+                    {
+                        model: MysqlClient.StockProductsTabelModel!,
+                        attributes: ['quantity'],
+                    },
+                ],
+            });
 
-        const [rows]: any = await MysqlClient.client?.execute(getAllProducts);
+            console.log(results[0])
 
-        const products: Product[] = rows.map((result: any) => ({
-            id: result.id,
-            nameProduct: result.nameProduct,
-            description: result.descript,
-            image: result.image,
-            price: result.price,
-        }));
+            const products: Product[] = results.map((product: any) => {
+                return {
+                    id: product.id,
+                    nameProduct: product.nameProduct,
+                    description: product.description,
+                    price: product.price,
+                    image: product.image,
+                    quantity: product.stock ? product.stock.quantity : 0, // Checa se 'stock' existe
+                };
+            })
 
-        return products
-    }catch (error){
-        throw new Error('Não foi possível buscar os produtos.');
-    }
+            console.log(products)
 
-    }
-
-    async getProductByName(name: string): Promise<Product> {
-        const getProductByName = `SELECT * FROM PRODUCTS
-                                WHERE nameProduct = '${name}'`
-
-        const [rows]: any = await MysqlClient.client?.execute(getProductByName);
-
-        if (rows.length === 0) {
-            throw new Error(`Product with name "${name}" not found`);
+            return products
+        } catch (error) {
+            throw new Error('Não foi possível buscar os produtos.');
         }
-                            
-        const result = rows[0];
-                            
-        const product: Product = {
-            id: result.id,
-            nameProduct: result.nameProduct,
-            description: result.description,
-            image: result.image,
-            price: result.price,
-        };
-                            
-        return product;
+
+    }
+
+    async getProductById(id: string): Promise<Product> {
+        try {
+            const result = await MysqlClient.ProductsTableModel?.findByPk(id);
+
+            if (!result) {
+                throw new Error(`Produto com ID ${id} não encontrado.`);
+            }
+
+            return result?.get();
+        } catch (error) {
+            throw new Error('Erro ao buscar o produto')
+        }
     }
 }

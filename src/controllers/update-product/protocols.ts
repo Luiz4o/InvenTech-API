@@ -9,5 +9,5 @@ export interface UpdateProductParams {
 }
 
 export interface IUpdateProductRepository {
-    updateProduct(params: UpdateProductParams): Promise<Product>
+    updateProduct(params: UpdateProductParams, id: string): Promise<Product>
 }

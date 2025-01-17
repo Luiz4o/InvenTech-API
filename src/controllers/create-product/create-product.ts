@@ -38,13 +38,6 @@ export class CreateProductController implements IController {
 
       const imageBuffer = httpRequest.file.buffer;
 
-      console.log("Criando produto com os dados:", {
-        nameProduct: httpRequest.body.nameProduct,
-        description: httpRequest.body.description,
-        price: httpRequest.body.price,
-        image: imageBuffer,
-      })
-
       const product = await this.createProductRepository.createProduct({
         nameProduct: httpRequest.body.nameProduct,
         description: httpRequest.body.description,

@@ -84,18 +84,18 @@ export const MysqlClient = {
 
       console.log("DEFINES CRIADOS")
 
-      await this.seq?.sync({ force: false });
+      await this.seq?.sync({ force: false })
     } catch (error) {
-      throw new Error("Falha ao criar o produto");
+      throw new Error("Falha ao criar o produto")
     }
   },
 
   async connect(): Promise<void> {
-    const host = process.env.MYSQL_HOST || "localhost";
-    const port = parseInt(process.env.MYSQL_PORT || "3306");
-    const user = process.env.MYSQL_USERNAME || "root";
-    const password = process.env.MYSQL_PASSWORD || "";
-    const database = process.env.MYSQL_DATABASE || "test";
+    const host = process.env.MYSQL_HOST || "localhost"
+    const port = parseInt(process.env.MYSQL_PORT || "3306")
+    const user = process.env.MYSQL_USERNAME || "root"
+    const password = process.env.MYSQL_PASSWORD || ""
+    const database = process.env.MYSQL_DATABASE || "test"
 
     try {
       this.seq = new Sequelize({

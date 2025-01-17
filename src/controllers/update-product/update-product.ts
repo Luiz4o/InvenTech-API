@@ -13,7 +13,7 @@ export class UpdateProductController implements IController {
   async handle(
     httpRequest: HttpRequest<UpdateProductParams>
   ): Promise<HttpResponse<Product | string>> {
-    const id = httpRequest?.params?.id;
+    const id: string = httpRequest?.params?.id;
     const body = httpRequest?.body;
 
     if (!body) {
@@ -21,7 +21,9 @@ export class UpdateProductController implements IController {
     }
 
     try {
-      if (!body.id) {
+      console.log(id)
+
+      if (!id) {
         return badRequest("Falta o id do produto");
       }
 
@@ -40,7 +42,9 @@ export class UpdateProductController implements IController {
         return badRequest("Algum campo enviado não é permitido");
       }
 
-      const product = await this.updateProductRepository.updateProduct( body );
+      const product = await this.updateProductRepository.updateProduct(body, id);
+
+      console.log(product)
 
       return ok<Product>(product);
     } catch (error) {
