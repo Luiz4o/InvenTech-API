@@ -9,11 +9,11 @@ export class MysqlUpdateStockProductRepository
   implements IUpdateStockProductRepository {
   async updateStockProduct(params: UpdateStockProductParams, id: string): Promise<Stock> {
     try {
-      if (!MysqlClient.StockProductsTabelModel) {
+      if (!MysqlClient.StockProductsTableModel) {
         throw new Error("Falha ao se conectar com o banco");
       }
 
-      const [affectedCount] = await MysqlClient.StockProductsTabelModel!.update(
+      const [affectedCount] = await MysqlClient.StockProductsTableModel!.update(
         { quantity: params.quantity },
         { where: { id: id } }
       );
@@ -22,7 +22,7 @@ export class MysqlUpdateStockProductRepository
         throw new Error("Não foi possível atualizar a quantidade");
 
       const updatedInstance =
-        await MysqlClient.StockProductsTabelModel!.findByPk(id);
+        await MysqlClient.StockProductsTableModel!.findByPk(id);
       return updatedInstance?.get();
     } catch (error: any) {
       throw new Error(`Erro ao criar o produto: ${error.message}`);

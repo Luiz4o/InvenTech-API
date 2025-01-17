@@ -14,7 +14,7 @@ export class CreateStockProductController implements IController {
     httpRequest: HttpRequest<CreateStockProductParams>
   ): Promise<HttpResponse<Stock | string>> {
     try {
-      const requiredFields: string[] = ["productId", "quantity"];
+      const requiredFields: string[] = ["productId", "quantity"]
 
       console.log(httpRequest.body?.productId)
       console.log(httpRequest.body?.quantity)
@@ -33,13 +33,13 @@ export class CreateStockProductController implements IController {
       const stock = await this.createStockProductRepository.CreateStockProduct({
         productId: httpRequest.body.productId,
         quantity: httpRequest.body.quantity,
-      });
+      })
 
-      console.log(httpRequest.body);
+      console.log(httpRequest.body)
 
-      return created(stock);
+      return created(stock)
     } catch (error) {
-      return serverError();
+      return serverError()
     }
   }
 }

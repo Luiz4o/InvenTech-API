@@ -15,6 +15,11 @@ import { MysqlCreateStockProductRepository } from './repositories/craete-stock-p
 import { CreateStockProductController } from './controllers/create-stock-product/create-stock-product';
 import { MysqlUpdateStockProductRepository } from './repositories/update-stock-product/mysql-update-stock-product';
 import { UpdateStockProductsController } from './controllers/update-stock-product/update-stock-product';
+import authenticateToken from './middlewares/authenticateToken';
+import { MysqlGetUserRepository } from './repositories/get-user/mysql-get-user';
+import { LoginController } from './controllers/login-user/login-user';
+import { MysqlCreateUserRepository } from './repositories/create-user/mysql-create-user';
+import { CreateUserController } from './controllers/create-user/create-user';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage })
@@ -37,7 +42,7 @@ const main = async () => {
 
     await MysqlClient.connect()
 
-    app.get('/products', async (req, res) => {
+    app.get('/products', authenticateToken, async (req, res) => {
       const mysqlGetProductsRepository = new MysqlGetProductsRepository();
       const getProductsController = new GetProductsController(mysqlGetProductsRepository);
       const { body, statusCode } = await getProductsController.handle();
@@ -45,7 +50,7 @@ const main = async () => {
       res.status(statusCode).send(body);
     });
 
-    app.post('/products', upload.single('image'), async (req, res) => {
+    app.post('/products', upload.single('image'), authenticateToken, async (req, res) => {
       const mysqlCreateProductRepository = new MysqlCreateProductRepository()
       const createProductController = new CreateProductController(mysqlCreateProductRepository)
 
@@ -57,7 +62,7 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.post('/stock', async (req, res) => {
+    app.post('/stock', authenticateToken, async (req, res) => {
       const mysqlCreateStockProductRepository = new MysqlCreateStockProductRepository()
       const createStockProductController = new CreateStockProductController(mysqlCreateStockProductRepository)
 
@@ -68,7 +73,29 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.patch('/products/:id', async (req, res) => {
+    app.post('/user', async (req, res) => {
+      const mysqlCreateUserRepository = new MysqlCreateUserRepository()
+      const createUserController = new CreateUserController(mysqlCreateUserRepository)
+
+      const { body, statusCode } = await createUserController.handle({
+        body: req.body
+      })
+
+      res.status(statusCode).send(body)
+    })
+
+    app.post('/login', async (req, res) => {
+      const mysqlGetUserRepository = new MysqlGetUserRepository()
+      const loginController = new LoginController(mysqlGetUserRepository)
+
+      const { body, statusCode } = await loginController.handle({
+        body: req.body
+      })
+
+      res.status(statusCode).send(body)
+    })
+
+    app.patch('/products/:id', authenticateToken, async (req, res) => {
       const mysqlUpdateProductRepository = new MysqlUpdateProductRepository()
       const updateProductController = new UpdateProductController(mysqlUpdateProductRepository)
 
@@ -80,7 +107,7 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.patch('/stock/:id', async (req, res) => {
+    app.patch('/stock/:id', authenticateToken, async (req, res) => {
       const mysqlUpdateStockProductRepository = new MysqlUpdateStockProductRepository()
       const updateStockProductController = new UpdateStockProductsController(mysqlUpdateStockProductRepository)
 
@@ -92,7 +119,7 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.delete('/products/:id', async (req, res) => {
+    app.delete('/products/:id', authenticateToken, async (req, res) => {
       const mysqlDeleteProductRepository = new MysqlDeleteProductRepository()
       const deleteProductController = new DeleteProductController(mysqlDeleteProductRepository)
 

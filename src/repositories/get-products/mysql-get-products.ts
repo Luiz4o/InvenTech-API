@@ -9,7 +9,7 @@ export class MysqlGetProductsRepository implements IGetProductsRepository {
             const results = await MysqlClient.ProductsTableModel!.findAll({
                 include: [
                     {
-                        model: MysqlClient.StockProductsTabelModel!,
+                        model: MysqlClient.StockProductsTableModel!,
                         attributes: ['quantity'],
                     },
                 ],

@@ -7,11 +7,11 @@ export class MysqlCreateStockProductRepository implements ICreateStockProductRep
   async CreateStockProduct(params: CreateStockProductParams): Promise<Stock> {
     try {
       if (!MysqlClient.client) {
-        await MysqlClient.connect();
+        throw new Error(`Erro ao conectar no banco`);
       }
 
       const stock: Stock = (
-        await MysqlClient.StockProductsTabelModel!.create({
+        await MysqlClient.StockProductsTableModel!.create({
           productId: params.productId,
           quantity: params.quantity,
         })
@@ -21,7 +21,7 @@ export class MysqlCreateStockProductRepository implements ICreateStockProductRep
 
       return stock;
     } catch (error: any) {
-      throw new Error(`Erro ao criar o produto: ${error.message}`);
+      throw new Error(`Erro ao criar o produto: ${error.message}`)
     }
   }
 }

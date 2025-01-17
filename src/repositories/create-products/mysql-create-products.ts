@@ -13,7 +13,6 @@ export class MysqlCreateProductRepository implements ICreateProductRepository {
       if (!MysqlClient.ProductsTableModel) {
         throw new Error("Falha ao se conectar com o banco");
       }
-      console.log('oi')
 
       const product: Product = (
         await MysqlClient.ProductsTableModel.create({

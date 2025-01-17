@@ -9,7 +9,8 @@ export const MysqlClient = {
   client: null as mysql.Connection | null,
   seq: null as Sequelize | null,
   ProductsTableModel: null as ModelStatic<Model<any, any>> | null,
-  StockProductsTabelModel: null as ModelStatic<Model<any, any>> | null,
+  StockProductsTableModel: null as ModelStatic<Model<any, any>> | null,
+  UsersTableModel: null as ModelStatic<Model<any, any>> | null,
 
   async createTables(): Promise<void> {
     try {
@@ -62,16 +63,36 @@ export const MysqlClient = {
         }
       );
 
-      if (!ProductsTableModel || !StockProductsTabelModel) {
-        throw new Error("Erro ao acessar alguma tabela");
+      const UsersTableModel = this.seq?.define("users", {
+        id: {
+          type: DataTypes.BIGINT,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        email: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        password: {
+          type: DataTypes.STRING,
+        },
+      },
+        {
+          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+        }
+      );
+
+      if (!ProductsTableModel || !StockProductsTabelModel || !UsersTableModel) {
+        throw new Error("Erro ao acessar a tabela");
       }
 
       this.ProductsTableModel = ProductsTableModel;
-      this.StockProductsTabelModel = StockProductsTabelModel;
-
-      if (!ProductsTableModel || !StockProductsTabelModel) {
-        throw new Error("Erro ao acessar alguma tabela");
-      }
+      this.StockProductsTableModel = StockProductsTabelModel;
+      this.UsersTableModel = UsersTableModel
 
       ProductsTableModel.hasOne(StockProductsTabelModel, {
         foreignKey: "productId",
@@ -81,8 +102,6 @@ export const MysqlClient = {
       StockProductsTabelModel.belongsTo(ProductsTableModel, {
         foreignKey: "productId"
       });
-
-      console.log("DEFINES CRIADOS")
 
       await this.seq?.sync({ force: false })
     } catch (error) {
