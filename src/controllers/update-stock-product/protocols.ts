@@ -1,8 +1,8 @@
 import { Stock } from "../../models/stock";
 
 export interface UpdateStockProductParams {
-    id: string,
     quantity: number,
+    id: string
 }
 
 export interface IUpdateStockProductRepository {

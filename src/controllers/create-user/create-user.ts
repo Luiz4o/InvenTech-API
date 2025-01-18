@@ -1,7 +1,9 @@
 import { User } from "../../models/user";
-import { badRequest, created, serverError } from "../helpers";
+import { badRequest, created, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { CreateUserParams, ICreateUserRepository } from "./protocols";
+import validator from "validator";
+
 
 export class CreateUserController implements IController {
   createUserRepository: ICreateUserRepository;
@@ -26,12 +28,16 @@ export class CreateUserController implements IController {
       }
 
       if (!httpRequest.body) {
-        return badRequest("Houve algum erro no body fornecido");
+        return badRequest("Algum campo fornecido está fora do padrão");
+      }
+
+      const emailValid = validator.isEmail(httpRequest.body.email)
+
+      if (!emailValid || httpRequest.body.email !== httpRequest.body.emailConfirm) {
+        return badRequest('Email inválido')
       }
 
       const hashPassword = await bcrypt.hash(httpRequest.body.password, 10)
-
-      console.log(hashPassword)
 
       const user = await this.createUserRepository.CreateUser({
         name: httpRequest.body.name,
@@ -39,9 +45,7 @@ export class CreateUserController implements IController {
         password: hashPassword,
       });
 
-      console.log(httpRequest.body);
-
-      return created(user);
+      return created<string>('Usuário criado com sucesso');
     } catch {
       return serverError();
     }

@@ -1,4 +1,6 @@
 import { Product } from "../../models/products";
+import { MysqlCreateStockProductRepository } from "../../repositories/craete-stock-product/mysql-create-stock-product";
+import { CreateStockProductController } from "../create-stock-product/create-stock-product";
 import { badRequest, created, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { CreateProductParams, ICreateProductRepository } from "./protocols";
@@ -45,7 +47,16 @@ export class CreateProductController implements IController {
         image: imageBuffer,
       });
 
-      console.log(httpRequest.body);
+      const mysqlCreateStockProductRepository = new MysqlCreateStockProductRepository()
+      const createStockProductController = new CreateStockProductController(mysqlCreateStockProductRepository)
+
+      createStockProductController.handle({
+        body: {
+          productId: product.id,
+          quantity: 0
+        }
+      }
+      )
 
       return created(product);
     } catch (error) {

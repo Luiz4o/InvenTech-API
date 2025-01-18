@@ -6,7 +6,6 @@ import { MysqlClient } from "../../database/mysql";
 import { Product } from "../../models/products";
 
 export class MysqlCreateProductRepository implements ICreateProductRepository {
-  //Adicionar no controller uma chamada para a função getByName, para ver se realmente foi criado este objeto no banco
   async createProduct(params: CreateProductParams): Promise<Product> {
     try {
 

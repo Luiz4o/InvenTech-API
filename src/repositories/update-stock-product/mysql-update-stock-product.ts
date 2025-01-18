@@ -13,16 +13,24 @@ export class MysqlUpdateStockProductRepository
         throw new Error("Falha ao se conectar com o banco");
       }
 
+      console.log(id)
+      console.log(params.quantity)
+
       const [affectedCount] = await MysqlClient.StockProductsTableModel!.update(
         { quantity: params.quantity },
-        { where: { id: id } }
+        { where: { productId: id } }
       );
 
       if (affectedCount === 0)
         throw new Error("Não foi possível atualizar a quantidade");
 
       const updatedInstance =
-        await MysqlClient.StockProductsTableModel!.findByPk(id);
+        await MysqlClient.StockProductsTableModel!.findOne({
+          where: {
+            productId: id
+          }
+        }
+        );
       return updatedInstance?.get();
     } catch (error: any) {
       throw new Error(`Erro ao criar o produto: ${error.message}`);

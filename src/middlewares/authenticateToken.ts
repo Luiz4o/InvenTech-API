@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { HttpResponse } from '../controllers/protocols';
+import jwt from 'jsonwebtoken';
 
-
-
-// Middleware de validação do token
-function authenticateToken(req: Request, res: Response, next: NextFunction): void  {
-  const token = req.header('Authorization')?.split(' ')[1]; // Pega o token do cabeçalho
+function authenticateToken(req: Request, res: Response, next: NextFunction): void {
+  const token = req.header('Authorization')?.split(' ')[1]
 
   if (!token) {
     throw new Error('')
@@ -14,11 +10,11 @@ function authenticateToken(req: Request, res: Response, next: NextFunction): voi
 
   jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Token inválido' });
+      return res.status(403).json({ message: 'Token inválido' })
     }
 
-    next();
-  });
+    next()
+  })
 }
 
 export default authenticateToken;

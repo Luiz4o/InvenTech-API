@@ -33,9 +33,9 @@ const main = async () => {
     app.use(express.json())
 
     app.use(cors({
-      origin: 'http://localhost:3000', // Permite requisições apenas do frontend
-      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
-      credentials: true, // Caso use cookies ou headers de autenticação
+      origin: 'http://localhost:3000',
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+      credentials: true,
     }))
 
     const port = parseInt(process.env.PORT || '8000')
@@ -95,7 +95,7 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.patch('/products/:id', authenticateToken, async (req, res) => {
+    app.post('/products/:id', upload.none(), authenticateToken, async (req, res) => {
       const mysqlUpdateProductRepository = new MysqlUpdateProductRepository()
       const updateProductController = new UpdateProductController(mysqlUpdateProductRepository)
 
@@ -107,7 +107,7 @@ const main = async () => {
       res.status(statusCode).send(body)
     })
 
-    app.patch('/stock/:id', authenticateToken, async (req, res) => {
+    app.post('/stock/:id', authenticateToken, async (req, res) => {
       const mysqlUpdateStockProductRepository = new MysqlUpdateStockProductRepository()
       const updateStockProductController = new UpdateStockProductsController(mysqlUpdateStockProductRepository)
 
@@ -144,5 +144,3 @@ process.on('SIGINT', async () => {
 });
 
 main()
-
-// app.listen(port, () => console.log(`listening on port${port}`))

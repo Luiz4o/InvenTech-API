@@ -13,9 +13,7 @@ export class MysqlGetProductsRepository implements IGetProductsRepository {
                         attributes: ['quantity'],
                     },
                 ],
-            });
-
-            console.log(results[0])
+            })
 
             const products: Product[] = results.map((product: any) => {
                 return {
@@ -24,28 +22,28 @@ export class MysqlGetProductsRepository implements IGetProductsRepository {
                     description: product.description,
                     price: product.price,
                     image: product.image,
-                    quantity: product.stock ? product.stock.quantity : 0, // Checa se 'stock' existe
-                };
+                    quantity: product.stock ? product.stock.quantity : 0,
+
+                }
             })
 
-            console.log(products)
 
             return products
         } catch (error) {
-            throw new Error('Não foi possível buscar os produtos.');
+            throw new Error('Não foi possível buscar os produtos.')
         }
 
     }
 
     async getProductById(id: string): Promise<Product> {
         try {
-            const result = await MysqlClient.ProductsTableModel?.findByPk(id);
+            const result = await MysqlClient.ProductsTableModel?.findByPk(id)
 
             if (!result) {
-                throw new Error(`Produto com ID ${id} não encontrado.`);
+                throw new Error(`Produto com ID ${id} não encontrado.`)
             }
 
-            return result?.get();
+            return result?.get()
         } catch (error) {
             throw new Error('Erro ao buscar o produto')
         }

@@ -14,18 +14,6 @@ export class CreateStockProductController implements IController {
     httpRequest: HttpRequest<CreateStockProductParams>
   ): Promise<HttpResponse<Stock | string>> {
     try {
-      const requiredFields: string[] = ["productId", "quantity"]
-
-      console.log(httpRequest.body?.productId)
-      console.log(httpRequest.body?.quantity)
-
-      for (const field of requiredFields) {
-        console.log(field);
-        if (!httpRequest?.body?.[field as keyof CreateStockProductParams]) {
-          return badRequest(`Falta passar o campo ${field}`);
-        }
-      }
-
       if (!httpRequest.body) {
         return badRequest("Houve algum erro no body fornecido");
       }
@@ -35,7 +23,6 @@ export class CreateStockProductController implements IController {
         quantity: httpRequest.body.quantity,
       })
 
-      console.log(httpRequest.body)
 
       return created(stock)
     } catch (error) {

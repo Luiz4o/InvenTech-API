@@ -9,12 +9,12 @@ export class MysqlDeleteProductRepository implements IDeleteProductRepository {
             if (!MysqlClient.ProductsTableModel) {
                 throw new Error('')
             }
-            const product = await MysqlClient.ProductsTableModel?.findByPk(1); // Buscar registro por ID
+            const product = await MysqlClient.ProductsTableModel?.findByPk(id); // Buscar registro por ID
             if (product) {
                 await product.destroy();
                 return 'Produto deletado com sucesso'
             }
-            return 'Produto não encontrado, informe o id e tente novamente'
+            throw new Error('Produto não encontrado, informe o id e tente novamente')
         } catch (error) {
             throw new Error(`Erro ao deletar o produto`)
         }

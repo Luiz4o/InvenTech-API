@@ -1,4 +1,3 @@
-import { FieldPacket, ResultSetHeader } from "mysql2";
 import { IUpdateProductRepository, UpdateProductParams } from "../../controllers/update-product/protocols";
 import { MysqlClient } from "../../database/mysql";
 import { Product } from "../../models/products";

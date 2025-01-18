@@ -36,7 +36,7 @@ export const MysqlClient = {
         },
       },
         {
-          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+          timestamps: false,
         }
       );
 
@@ -59,7 +59,7 @@ export const MysqlClient = {
         },
       },
         {
-          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+          timestamps: false,
         }
       );
 
@@ -82,7 +82,7 @@ export const MysqlClient = {
         },
       },
         {
-          timestamps: false, // Desativa a criação automática de `createdAt` e `updatedAt`
+          timestamps: false,
         }
       );
 
