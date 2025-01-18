@@ -1,4 +1,4 @@
-# Product Management API
+# InvenTech API
 
 Esta aplicação é uma API que permite a criação de usuários, produtos e gerenciamento de estoque. Ela também oferece autenticação baseada em JWT para usuários logados e permite o upload de imagens para os produtos, que são armazenadas como dados binários no banco de dados.
 
