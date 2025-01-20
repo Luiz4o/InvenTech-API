@@ -28,3 +28,10 @@ Esta aplicação é uma API que permite a criação de usuários, produtos e ger
 - JWT (JSON Web Tokens)
 - Multer (para upload de arquivos)
 - MySQL (banco de dados)
+
+--
+
+## Observações 
+
+- É necessário configurar um arquivo .env para as variáveis de configuração do banco, e uma JWT_SECRET para para não encontrar erros ao iniciar o projeto
+-É preciso rodar o script do aquivo .sql em seu MySQL para rodar funcionar a API
